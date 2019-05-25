@@ -20,11 +20,12 @@ RUN cgr drush/drush
 
 RUN rm -rf /var/www/html/*
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/src/web
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/drupal
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 WORKDIR /var/www/html
-RUN git clone https://github.com/jacobsaw/key_drup_composer.git src
-WORKDIR /var/www/html/src
-RUN composer install
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 8M/g' $PHP_INI_DIR/php.ini

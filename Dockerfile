@@ -29,3 +29,11 @@ WORKDIR /var/www/html
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 8M/g' $PHP_INI_DIR/php.ini
+
+COPY html .
+
+RUN composer install
+
+RUN cp settings.php drupal/sites/default/settings.php
+
+RUN chmod a-w drupal/sites/default/settings.php
